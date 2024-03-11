@@ -3,10 +3,10 @@ from fastapi import FastAPI
 app = FastAPI()
 
 @app.get("/")
-async def root():
+async def get_app():
         return {"message" : "Hello World!"}
 
-@app.post("/")
+@app.post("/", description = "Post app")
 async def post():
         return {"message" : "Hello from post route"}
 
