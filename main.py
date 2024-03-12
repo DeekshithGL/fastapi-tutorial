@@ -18,13 +18,13 @@ async def put():
 
 #path-parameters
 
-@app.get("/items") #if i add "/items" after the localhost route, then the below content will be displayed
-def list_items():
-        return {"message": "list items route"}
+# @app.get("/items") #if i add "/items" after the localhost route, then the below content will be displayed
+# def list_items():
+#         return {"message": "list items route"}
 
-@app.get("/items/{item_id}") #add route for the existing route
-def get_item(item_id : int): #we can add type for parameter passed like def get_item(item_id : int)
-        return {"item_id": item_id}
+# @app.get("/items/{item_id}") #add route for the existing route
+# def get_item(item_id : int): #we can add type for parameter passed like def get_item(item_id : int)
+#         return {"item_id": item_id}
 
 
 
@@ -56,3 +56,30 @@ def get_food(food_name: FoodEnum):
         if food_name == FoodEnum.fruits:
                 return {"food name": food_name, "message": "sweet fruits"}
         return {"food name": food_name, "message": "dairy product"}
+
+
+# query paramaters
+# we do not include item name or id in route in this case, we just take the item as a parameter in function header!
+
+
+items_db = [{"item_name": "abcd"}, {"item_name": "pqrs"}, {"item_name": "wxyz"}, {"item_name": "mnop"}]
+@app.get("/items")
+async def list_items(skip: int = 0, limit: int = 10):
+        return items_db[skip: skip + limit]
+
+@app.get("/items/{item_id}")
+async def get_items(item_id, q : str | None = None):           #here, item_id is path parameter and q is a query parameter
+        if q:
+                return {"item_id": item_id, "q": q}
+        return {"item_id": item_id}
+
+@app.get("/items/{item_id}/users/{user_id}")
+async def get_item_user(item_id : int, user_id : int, q : str | None = None, short:bool = False):
+        item = {"item_id": item_id, "owner_id": user_id}
+        if q:
+                item.update({"q": q})
+        if not short:
+                item.update({
+                        "description": "lorem ipsum dolor......."
+                        })
+        return item
