@@ -83,3 +83,32 @@ async def get_item_user(item_id : int, user_id : int, q : str | None = None, sho
                         "description": "lorem ipsum dolor......."
                         })
         return item
+
+
+from pydantic import BaseModel
+
+class Item(BaseModel):
+        name: str
+        description: str | None = None
+        price: float
+        tax: float | None = None
+
+
+@app.post("/items")
+async def create_item(item: Item):
+        item_dict = dict(item)
+
+        if item.tax:
+                price_with_tax = item.price + item.tax
+                item_dict.update({"price_with_tax": price_with_tax})
+
+        return item_dict
+
+@app.put("/items/{item_id}")
+async def create_item_with_id(item_id: int, q: str | None = None):
+        result = {"item_id": item_id}
+
+        if q:
+                result.update({"q": q})
+
+        return result
